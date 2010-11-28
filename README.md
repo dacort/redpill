@@ -7,3 +7,10 @@ Usage
 -------
 
 `ruby < <(curl http://github.com/dacort/redpill/redpill.rb)`
+
+ToDo
+-------
+
+* Config files for each app
+* Auto-scraping of remote websites to determine latest version
+* In general, more configurability
