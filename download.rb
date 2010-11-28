@@ -38,6 +38,13 @@ class Download
       raise Exception.new("Command failed: #{result}") if $?.to_i > 0
       result
     end
+    
+    def find_pkg(dir)
+      Dir.glob("#{dir}/*.pkg").first
+    end
+    def find_app(dir)
+      Dir.glob("#{dir}/*.app").first
+    end
 end
   
 class Dmg < Download
@@ -67,13 +74,23 @@ class Dmg < Download
       def unzip(filename)
         system("unzip #{filename}")
       end
-      def find_pkg(dir)
-        Dir.glob("#{dir}/*.pkg").first
-      end
-      def find_app(dir)
-        Dir.glob("#{dir}/*.app").first
-      end
+end
+
+class ZippedPkg < Download
+  attr_accessor :pkg_path
+  def install(cached_filename = nil)
+    puts "  downloading"
+    file = cached_filename ? File.join("tmp", cached_filename) : download
+
+    puts "  unzipping"
+    result = system(%{unzip -q "#{file}" -d tmp})
+    
+    puts "  installing package #{@pkg_path}"
+    system(%{sudo installer -pkg "tmp/#{@pkg_path}" -target "/"})
+
+    true
   end
+end
 
 class ZippedApp < Download
   attr_accessor :app_name

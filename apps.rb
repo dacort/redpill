@@ -12,6 +12,16 @@ module Apps
       @download_url = "http://dl.macromates.com/TextMate_1.5.10_r1623.zip"
       super
     end
+    
+    def post_install
+      # Install the ruby-tmbundle
+      # ToDo: git prerequisite
+      dest = "#{ENV['HOME']}/Library/Application\ Support/TextMate/Bundles"
+      FileUtils.mkdir_p dest
+      system(%{git clone git://github.com/drnic/ruby-tmbundle.git "#{File.join(dest, "Ruby.tmbundle")}"})
+      system(%{osascript -e 'tell app "TextMate" to reload bundles'})
+      true
+    end
   end
 
   class Chrome < Dmg
@@ -84,6 +94,43 @@ module Apps
     
     def post_install
       system(%{echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc})
+      true
+    end
+  end
+  
+  class DropBox < Dmg
+    def initialize
+      @download_url = "http://dl-web.dropbox.com/u/17/Dropbox%200.8.114.dmg"
+      super
+    end
+  end
+  
+  class SIMBL < ZippedPkg
+    def initialize
+      @pkg_path = "SIMBL-0.9.8d/SIMBL-0.9.8d.pkg"
+      @download_url = "http://www.culater.net/dl/files/SIMBL-0.9.8c.zip"
+      super
+    end
+  end
+  
+  class Visor < Download
+    def initialize
+      @download_url = "http://cloud.github.com/downloads/darwin/visor/Visor-2.2-84d1873.zip"
+      super
+    end
+    
+    def install
+      # ToDo: Prerequisites like SIMBL
+      # ~/Library/Application Support/SIMBL/Plugins
+      puts "  downloading"
+      file = download
+      
+      puts "  unzipping"
+      result = system(%{unzip -q "#{file}" -d tmp})
+      
+      puts "  copying to SIMBL plugin folder"
+      FileUtils.mkdir_p "#{ENV['HOME']}/Library/Application\ Support/SIMBL/Plugins"
+      FileUtils.mv 'tmp/Visor.bundle', "#{ENV['HOME']}/Library/Application\ Support/SIMBL/Plugins/"      
       true
     end
   end
