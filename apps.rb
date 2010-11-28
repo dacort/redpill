@@ -18,8 +18,17 @@ module Apps
       # ToDo: git prerequisite
       dest = "#{ENV['HOME']}/Library/Application\ Support/TextMate/Bundles"
       FileUtils.mkdir_p dest
+      system(%{git clone git://github.com/protocool/ack-tmbundle.git "#{File.join(dest, "Ack.tmbundle")}"})
       system(%{git clone git://github.com/drnic/ruby-tmbundle.git "#{File.join(dest, "Ruby.tmbundle")}"})
       system(%{osascript -e 'tell app "TextMate" to reload bundles'})
+      
+      # I like my line numbers on
+      plist = "#{ENV['HOME']}/Library/Preferences/com.macromates.textmate.plist"
+      `/usr/libexec/PlistBuddy -c "Add OakTextViewLineNumbersEnabled bool true" "#{plist}"`
+      if $?.to_i > 0
+        # Make sure it's set to true if it already exists
+        `/usr/libexec/PlistBuddy -c "Set OakTextViewLineNumbersEnabled true" "#{plist}"`
+      end
       true
     end
   end
