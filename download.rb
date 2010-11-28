@@ -1,5 +1,6 @@
 require 'uri'
 require 'net/http'
+require 'net/https'
 
 class Download
   attr_reader :download_url
@@ -19,7 +20,9 @@ class Download
     def download
       uri = URI.parse(@download_url)
       filename = nil
-      Net::HTTP.start(uri.host) { |http|
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = "https" == uri.scheme
+      http.start do |http|
         resp = http.get(uri.path)
         if (match = resp['content-disposition'].match(/filename=\"([^"]+)\"/)[1] rescue nil)
           filename = resp['content-disposition'].match(/filename=\"([^"]+)\"/)[1]
@@ -29,7 +32,7 @@ class Download
         open(File.join('tmp', filename), "wb") { |file|
           file.write(resp.body)
         }
-      }
+      end
       File.join('tmp', filename)
     end
 

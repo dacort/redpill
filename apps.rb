@@ -98,6 +98,18 @@ module Apps
     end
   end
   
+  class Homebrew < Download
+    def initialize
+      @download_url = "https://gist.github.com/raw/323731/install_homebrew.rb"
+    end
+    
+    def install
+      filename = download
+      require filename
+      true
+    end
+  end
+  
   class DropBox < Dmg
     def initialize
       @download_url = "http://dl-web.dropbox.com/u/17/Dropbox%200.8.114.dmg"
