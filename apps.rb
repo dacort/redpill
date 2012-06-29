@@ -66,7 +66,7 @@ module Apps
   class GitX < ZippedApp
     def initialize
       @app_name = "GitX"
-      @download_url = "http://frim.frim.nl/GitXStable.app.zip"
+      @download_url = "https://github.com/downloads/laullon/gitx/GitX-L_v0.8.4.zip"
       super
     end
   end
